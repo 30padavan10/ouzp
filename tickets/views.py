@@ -981,6 +981,7 @@ def csw(request):
         }
         return render(request, 'tickets/csw.html', context)
 
+import json
 
 def data(request):
     """Данный метод определяет какой требуется тип ТР(перенос, организация доп. услуг, организация нов. точки и т.д),
@@ -990,16 +991,18 @@ def data(request):
     credent = cache.get(user)
     username = credent['username']
     password = credent['password']
-    spp_link = request.session['spplink']
     templates = ckb_parse(username, password)
     request.session['templates'] = templates
     value_vars = {}
     for key, value in request.session.items():
         value_vars.update({key: value})
+
     ticket_tr_id = request.session['ticket_tr_id']
     ticket_tr = TR.objects.get(id=ticket_tr_id)
     type_ticket = ticket_tr.ticket_k.type_ticket
     value_vars.update({'type_ticket': type_ticket})
+    # with open('data.json', 'w', encoding='utf-8') as f:
+    #     json.dump(value_vars, f, ensure_ascii=False, indent=4)
     readable_services = value_vars.get('readable_services')
 
     if value_vars.get('type_pass') and 'Перенос, СПД' in value_vars.get('type_pass'):
